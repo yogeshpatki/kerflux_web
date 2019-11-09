@@ -1,12 +1,13 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { getSinWave } from '../../lib/waves';
 
 import { makeStyles } from '@material-ui/styles';
-import { CSSTransition } from 'react-transition-group';
 
-const drawInputWave= (type)  => {
-
-}
+const initialState = {
+    waveData: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99],
+    dragging: false,
+    initialDragX : undefined
+};
 
 const useStyles = makeStyles(() => ({
     canvas_container: {
@@ -17,31 +18,76 @@ const useStyles = makeStyles(() => ({
 export default function Wave(props) {
     const classes = useStyles();
     let canvas_ref = React.createRef();
-    let is_moving = false;
+    const [state, setState] = useState(initialState);
+    const {dragging, waveData, initialDragX} = state;
 
-    useEffect(() => {
-         let c = canvas_ref.current;
-         let ctx = c.getContext("2d");
-         drawWave(ctx);
-    });
+    const startedDragging = (e) => {
+        if(dragging) {
 
-    return (
-        <div container="true">
-                <canvas ref={canvas_ref} className={classes.canvas_container} width="1100" height="120">
+        } else {
+            setState({...state, dragging: true, initialDragX: e.clientX});
+        }
+    };
 
-                </canvas>
-        </div>
-    )
+    const dragWave = (e) => {
+        if(dragging) {
+            const x = e.clientX;
+            const translatedWave = waveData.slice(0);
+            translatedWave.rotate(initialDragX-x);
+            clearCanvas();
+            setState({...state, waveData: translatedWave});
+        } else {
+            //console.log('not dragging');
+        }
+    }
 
-    function drawWave(ctx) {
+    const stoppedDragging = (e) => {
+        if(dragging) {
+            setState({...state, dragging: false, initialDragX : null}); 
+        }
+    };
+
+    const clearCanvas = () => {
+        canvas_ref.current.getContext('2d').clearRect(0,0,1200,200);
+    } ;
+
+    function drawWave(ctx, waveData) {
+        ctx.clearRect(0,0,1100,120);  
         ctx.lineWidth = 3;
         ctx.moveTo(50, 60);
-        let wave = getSinWave();
+        let wave = waveData;
+        console.log(waveData);
         for (let i = 1; i < 1000; i++) {
             ctx.lineTo(50 + i, 10 + wave[i]);
         }
         ctx.stroke();
     }
+    useEffect(
+        () => {
+         let c = canvas_ref.current;
+         let ctx = c.getContext("2d");
+         drawWave(ctx, waveData);
+    });
 
-    onMouseDown
+    return (        
+    <div container="true">
+        <canvas ref={canvas_ref} className={classes.canvas_container} width="1100" height="120" 
+        onMouseDown={startedDragging} 
+        onMouseUp={stoppedDragging} 
+        onMouseOut={stoppedDragging}
+        onMouseMove={dragWave} > </canvas> 
+    </div>);
 }
+
+Array.prototype.rotate = (function() {
+    var unshift = Array.prototype.unshift,
+        splice = Array.prototype.splice;
+
+    return function(count) {
+        var len = this.length >>> 0,
+            count = count >> 0;
+
+        unshift.apply(this, splice.call(this, count % len, len));
+        return this;
+    };
+})();
