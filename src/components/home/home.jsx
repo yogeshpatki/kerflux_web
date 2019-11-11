@@ -7,6 +7,9 @@ const useStyles = makeStyles(theme => ({
     root: {
       flexGrow: 1,
     },
+    appBar: {
+      backgroundColor: '#333'
+    },
     menuButton: {
       marginRight: theme.spacing(2),
     },
@@ -19,7 +22,7 @@ export default function Home(){
     const classes = useStyles();
     return (
         <Container >
-            <AppBar position="static">
+            <AppBar position="static" className={classes.appBar}>
                 <Toolbar>
                     <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
                     <MenuIcon />
