@@ -1,7 +1,6 @@
-import React from 'react'
-import { Paper, makeStyles, Container } from '@material-ui/core'
+import React, { useState, useEffect } from 'react'
+import { Paper, makeStyles } from '@material-ui/core'
 import Wave from './Wave';
-import WaveSvg from './WaveSvg';
 import { getSinWave } from '../../lib/waves';
 
 const useStyles = makeStyles(theme => ({
@@ -24,72 +23,109 @@ const useStyles = makeStyles(theme => ({
       },
 }));
 
+const initialState = {
+  wavesData: [],
+  expectedResult: [],
+  currentResult: [],
+  currentError: 100
+}
+
+const getNWaves = (n) => {
+  let waves = [];
+  for(let i = 0; i < n; i ++) {
+    let a = F(R() * 10000) % typeOfWaves.length;
+     waves.push(getSinWave());
+  }
+  return waves;
+}
+
+const getExpectedResult = (waves) => {
+  let rotatedWaves = waves.map(wave => wave.slice(0).rotate(F(200*R())));
+  let expectedResult = new Array(1000).fill(0);
+  for(let i = 0 ; i < 1000; i++) {
+    for(let j = 0; j < waves.length; j++) {
+      expectedResult[i] += rotatedWaves[j][i];
+    }
+    expectedResult[i] /= (waves.length);
+  }
+  return expectedResult;
+}
+
+const getCurrentResult = (waves) => {
+  let currentResult = new Array(1000).fill(0);
+  for(let i = 0 ; i < 1000; i++) {
+    for(let j = 0; j < waves.length; j++) {
+      currentResult[i] += waves[j][i];
+    }
+    currentResult[i] /= (waves.length) ;
+  }
+  return currentResult;
+}
+
+const getWaves = (numberOfWaves) => {
+  let waveData = getNWaves(numberOfWaves);
+  return {
+    wavesData: waveData,
+    expectedResult: getExpectedResult(waveData),
+    currentResult: getCurrentResult(waveData)
+  };
+}
+
 const typeOfWaves = ['sin','square'];
 const F = Math.floor;
 const R = Math.random 
 export default function WaveGrid(props) {
     const {numberOfWaves} = props;
-    console.log(numberOfWaves);
     const classes = useStyles();
-    let waves = [];
-    let waveData = [];
-    let rotatedWaveData = [];
-    let actualResult = [];
-    let expectedWave = [];
+    
 
-    const getWaves = () => {
-        for(let i = 0 ; i< numberOfWaves; i++) {
-            let a = F(R() * 10000) % typeOfWaves.length;
-            let currentWaveData = getSinWave();
-            let rotatedData = currentWaveData.slice(0);
-            waveData.push(currentWaveData);
-            rotatedData.rotate(F(200 * R()));
-            rotatedWaveData.push(rotatedData);
-        }
-        waves.push(getInputWaves(waveData));
-        for(let i = 0; i < 1000; i++ ){
-          let amp = 0;
-          let actAmp = 0;
-          for(let j = 0; j < numberOfWaves; j++) {
-            amp += rotatedWaveData[j][i];
-            actAmp += waveData[j][i];
-          }
-          expectedWave[i] = amp/numberOfWaves;
-          actualResult[i] = actAmp/numberOfWaves;
-        }
-        waves.push(getOutputWave(actualResult, expectedWave));
-        return waves;
-    }
+    const [state, setState] = useState(initialState);
+    
+    useEffect(() => {
+      if(state.wavesData.length === 0) {
+        setState(getWaves(numberOfWaves));
+      }
+    });
 
-    const updateFunction = (newData, key) => {
-      waves[key] = newData;
+    const {wavesData, expectedResult, currentResult} = state;
+    
+
+    const updateFunction = (key, newData) => {
+      wavesData[key] = newData;
+      setState({...state,
+        wavesData,
+        currentResult: getCurrentResult(wavesData)
+      })
       
     }
     const getInputWaves = inputWaveData => {
-      return inputWaveData.map((waveData,i) => (<Wave key={i} waveData={waveData} updateFunction/>));
+      return inputWaveData.map((waveData,i) => (<Wave key={i} ind={i} waveData={waveData} updateFunction={updateFunction} />));
     };
-
-
+  
+    const getAllWaves = () => {
+      let waves = [];
+      waves.push(getInputWaves(wavesData));
+      waves.push(getOutputWave(currentResult,expectedResult));
+      return waves;
+    }
 
     const getOutputWave = (waveData, resultData) => {
-      return (<Wave waveData={waveData} resultData={resultData} udpateFunction/>);
+      return (<Wave waveData={waveData} resultData={resultData} updateFunction={updateFunction} key='res'/>);
     }
 
     return (
         <Paper elevation={0} className={`${classes.paper_body} ${classes.paper}`} square>
-            {
-                getWaves()
-            }
+            {wavesData && wavesData.length > 0 ? getAllWaves() : (<p>Loading</p>)}
         </Paper>
     )
 }
 
 Array.prototype.rotate = (function() {
-  var unshift = Array.prototype.unshift,
+  let unshift = Array.prototype.unshift,
       splice = Array.prototype.splice;
 
   return function(count) {
-      var len = this.length >>> 0,
+      let len = this.length >>> 0;
           count = count >> 0;
 
       unshift.apply(this, splice.call(this, count % len, len));

@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react'
-import { getSinWave } from '../../lib/waves';
+import React, {useState } from 'react'
 
 import { makeStyles } from '@material-ui/styles';
 

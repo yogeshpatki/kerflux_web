@@ -1,16 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { getSinWave } from '../../lib/waves';
 
 import { makeStyles } from '@material-ui/styles';
 import { drawResultOnCanvas, drawWaveOnCanvas } from '../../lib/canvasUtils';
 
 const initialState = {
-    waveData: [],
     dragging: false,
-    initialDragX : undefined,
-    resultData:[],
-    draggable: true,
-    updateFunction: () => console.log('shifted')
+    initialDragX : undefined
 };
 
 const useStyles = makeStyles(() => ({
@@ -23,19 +18,14 @@ export default function Wave(props) {
     const classes = useStyles();
     let canvas_ref = React.createRef();
 
-    const [state, setState] = useState(
-        {...initialState, 
-            waveData:props.waveData, 
-            resultData: props.resultData, 
-            draggable: !(props.resultData && props.resultData.length > 0),
-            updateFunction: props.updateFunction
-        });
+    const [state, setState] = useState({...initialState});
 
-    const {dragging, waveData, resultData, initialDragX,draggable, updateFunction} = state;
-
+    const {dragging, initialDragX} = state;
+    const { waveData, resultData, updateFunction} = props;
+    const draggable = !(resultData && resultData.length > 0);
     const startedDragging = (e) => {
         if(!dragging) {
-            setState({...state, dragging: true, initialDragX: e.clientX});
+            setState({dragging: true, initialDragX: e.clientX});
         }
     };
 
@@ -44,14 +34,14 @@ export default function Wave(props) {
             const x = e.clientX;
             const translatedWave = waveData.slice(0);
             translatedWave.rotate(initialDragX-x);
-            //updateFunction(props.key, translatedWave);
-            setState({...state, waveData: translatedWave, initialDragX: x});
+            setState({...state, initialDragX: x });
+            updateFunction(props.ind, translatedWave);
         }
     }
 
     const stoppedDragging = (e) => {
         if(dragging) {
-            setState({...state, dragging: false, initialDragX : null}); 
+            setState({dragging: false, initialDragX : null}); 
         }
     };
 
