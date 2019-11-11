@@ -23,15 +23,15 @@ export default function Wave(props) {
     const {dragging, initialDragX} = state;
     const { waveData, resultData, updateFunction} = props;
     const draggable = !(resultData && resultData.length > 0);
-    const startedDragging = (e) => {
-        if(!dragging) {
-            setState({dragging: true, initialDragX: e.clientX});
-        }
-    };
 
-    const dragWave = (e) => {
+    const startDragging = x => {
+        if(!dragging) {
+            setState({dragging: true, initialDragX: x});
+        }
+    }
+
+    const dragWave = x => {
         if(draggable && dragging) {
-            const x = e.clientX;
             const translatedWave = waveData.slice(0);
             translatedWave.rotate(initialDragX-x);
             setState({...state, initialDragX: x });
@@ -39,10 +39,34 @@ export default function Wave(props) {
         }
     }
 
-    const stoppedDragging = (e) => {
+    const stopDragging = () => {
         if(dragging) {
             setState({dragging: false, initialDragX : null}); 
         }
+    }
+
+    const handleMouseDown = (e) => {
+        startDragging(e.clientX);
+    };
+
+    const handleTouchStart = (e) => {
+        startDragging(e.touches[0].clientX);
+    }
+
+    const handleTouchEnd = (e) => {
+        stopDragging();
+    }
+
+    const handleTouchMove = (e) => {
+        dragWave(e.touches[0].clientX);
+    }
+
+    const handleMouseMove = (e) => {
+        dragWave(e.clientX);
+    }
+
+    const handleMouseUpOrOut = () => {
+        stopDragging();
     };
 
     useEffect(
@@ -55,10 +79,15 @@ export default function Wave(props) {
     return (        
         <div container="true">
             <canvas ref={canvas_ref} className={classes.canvas_container} width="1100" height="120" 
-            onMouseDown={startedDragging} 
-            onMouseUp={stoppedDragging} 
-            onMouseOut={stoppedDragging}
-            onMouseMove={dragWave} > </canvas> 
+            onMouseDown={handleMouseDown} 
+            onTouchStart={handleTouchStart} 
+            onMouseUp={handleMouseUpOrOut} 
+            onTouchEnd={handleTouchEnd} 
+            onMouseMove={handleMouseMove} 
+            onTouchMove={handleTouchMove}
+            > </canvas> 
         </div>
     );
+
+
 }

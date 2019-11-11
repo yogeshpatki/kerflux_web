@@ -8,7 +8,7 @@ const useStyles = makeStyles(theme => ({
       flexGrow: 1,
     },
     paper_body: {
-      minHeight: '800px',
+      minHeight: '100vh',
       overflow: 'hidden',
       backgroundColor: 'black',
       color: 'white'
