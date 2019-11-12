@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 
 import { makeStyles } from '@material-ui/styles';
 import { drawResultOnCanvas, drawWaveOnCanvas } from '../../lib/canvasUtils';
+import { Grid } from '@material-ui/core';
 
 const initialState = {
     dragging: false,
@@ -11,6 +12,8 @@ const initialState = {
 const useStyles = makeStyles(() => ({
     canvas_container: {
       backgroundColor: 'black',   
+    },
+    canvas: {
     }
 }));
 
@@ -73,12 +76,12 @@ export default function Wave(props) {
         () => {
          let c = canvas_ref.current;
          let ctx = c.getContext("2d");
-         resultData && resultData.length > 0 ? drawResultOnCanvas(ctx,waveData,resultData) : drawWaveOnCanvas(ctx, waveData);
+         resultData && resultData.length > 0 ? drawResultOnCanvas(ctx,waveData,resultData) : drawWaveOnCanvas(ctx, waveData,props.ind);
     });
 
     return (        
-        <div container="true">
-            <canvas ref={canvas_ref} className={classes.canvas_container} width="1100" height="120" 
+        <div className={classes.canvas_container} >
+            <canvas ref={canvas_ref} className={classes.canvas} width="1100" height="120"
             onMouseDown={handleMouseDown} 
             onTouchStart={handleTouchStart} 
             onMouseUp={handleMouseUpOrOut} 

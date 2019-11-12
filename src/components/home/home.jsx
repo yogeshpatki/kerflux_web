@@ -24,7 +24,7 @@ export default function Home(){
             <AppBar position="static" className={classes.appBar}>
                 <Toolbar>
                     <Typography variant="h6" className={classes.title}>
-                    KerFlux - Web
+                      KerFlux - Web
                     </Typography>
                 </Toolbar>
             </AppBar>

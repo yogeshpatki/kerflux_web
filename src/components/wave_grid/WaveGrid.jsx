@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { Paper, makeStyles } from '@material-ui/core'
+import { Paper, makeStyles, Grid } from '@material-ui/core'
 import Wave from './Wave';
 import { getSinWave, getSawTooth, getBars, getRectWave,getMixedSine } from '../../lib/waves';
-
+const TOTAL_WAVE_LENGTH = 1000;
 const useStyles = makeStyles(theme => ({
     root: {
       flexGrow: 1,
@@ -18,7 +18,6 @@ const useStyles = makeStyles(theme => ({
     },
     paper: {
         padding: theme.spacing(2),
-        textAlign: 'center',
         color: 'white',
       },
 }));
@@ -35,16 +34,15 @@ const waveFunctions = [getSinWave, getSawTooth, getBars, getRectWave,getMixedSin
 const getNWaves = (n) => {
   let waves = [];
   for(let i = 0; i < n; i ++) {
-    let a = F(R() * 10000) % typeOfWaves.length;
-     waves.push(waveFunctions[Math.floor(waveFunctions.length * Math.random())](1000));
+     waves.push(waveFunctions[Math.floor(waveFunctions.length * Math.random())](TOTAL_WAVE_LENGTH));
   }
   return waves;
 }
 
 const getExpectedResult = (waves) => {
   let rotatedWaves = waves.map(wave => wave.slice(0).rotate(F(200*R())));
-  let expectedResult = new Array(1000).fill(0);
-  for(let i = 0 ; i < 1000; i++) {
+  let expectedResult = new Array(TOTAL_WAVE_LENGTH).fill(0);
+  for(let i = 0 ; i < TOTAL_WAVE_LENGTH; i++) {
     for(let j = 0; j < waves.length; j++) {
       expectedResult[i] += rotatedWaves[j][i];
     }
@@ -54,8 +52,8 @@ const getExpectedResult = (waves) => {
 }
 
 const getCurrentResult = (waves) => {
-  let currentResult = new Array(1000).fill(0);
-  for(let i = 0 ; i < 1000; i++) {
+  let currentResult = new Array(TOTAL_WAVE_LENGTH).fill(0);
+  for(let i = 0 ; i < TOTAL_WAVE_LENGTH; i++) {
     for(let j = 0; j < waves.length; j++) {
       currentResult[i] += waves[j][i];
     }
@@ -73,7 +71,6 @@ const getWaves = (numberOfWaves) => {
   };
 }
 
-const typeOfWaves = ['sin','square'];
 const F = Math.floor;
 const R = Math.random;
 
@@ -104,7 +101,11 @@ export default function WaveGrid(props) {
     const getInputWaves = inputWaveData => {
       return inputWaveData.map((waveData,i) => (<Wave key={i} ind={i} waveData={waveData} updateFunction={updateFunction} />));
     };
-  
+
+    const getOutputWave = (waveData, resultData) => {
+      return (<Wave waveData={waveData} resultData={resultData} updateFunction={updateFunction} key='res'/>);
+    }
+      
     const getAllWaves = () => {
       let waves = [];
       waves.push(getInputWaves(wavesData));
@@ -112,21 +113,15 @@ export default function WaveGrid(props) {
       return waves;
     }
 
-    const getOutputWave = (waveData, resultData) => {
-      return (<Wave waveData={waveData} resultData={resultData} updateFunction={updateFunction} key='res'/>);
-    }
-
     const getError = () => {
-      let error = 0;
       let meanSquaredError = (currentResult.map((d,i) => Math.pow((d - expectedResult[i]), 2)).reduce((a,b) => a+b))/currentResult.length;
       return Math.pow(meanSquaredError,0.5);
     }
 
     return (
         <Paper elevation={0} className={`${classes.paper_body} ${classes.paper}`} square>
-            {wavesData && wavesData.length > 0 ? getAllWaves() : (<p>Loading</p>)}
-            {wavesData && wavesData.length > 0 ? <p>Error : {getError()}</p> : (<p>Loading</p>)}
-            
+              {wavesData && wavesData.length > 0 ? getAllWaves() : (<p>Loading</p>)}
+              {wavesData && wavesData.length > 0 ? <p>Error : {getError()}</p> : (<p>Loading</p>)}
         </Paper>
     )
 }
