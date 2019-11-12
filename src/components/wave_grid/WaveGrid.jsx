@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Paper, makeStyles } from '@material-ui/core'
 import Wave from './Wave';
-import { getSinWave } from '../../lib/waves';
+import { getSinWave, getSawTooth, getBars, getRectWave,getMixedSine } from '../../lib/waves';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -34,7 +34,7 @@ const getNWaves = (n) => {
   let waves = [];
   for(let i = 0; i < n; i ++) {
     let a = F(R() * 10000) % typeOfWaves.length;
-     waves.push(getSinWave());
+     waves.push(getMixedSine(1000));
   }
   return waves;
 }
@@ -73,7 +73,8 @@ const getWaves = (numberOfWaves) => {
 
 const typeOfWaves = ['sin','square'];
 const F = Math.floor;
-const R = Math.random 
+const R = Math.random;
+
 export default function WaveGrid(props) {
     const {numberOfWaves} = props;
     const classes = useStyles();
