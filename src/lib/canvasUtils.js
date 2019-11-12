@@ -4,23 +4,29 @@ const inputWaveColors = ['#bb86fc','#03dac6','#CF6679'];
 export function drawWaveOnCanvas(ctx, waveData,i) {
     let width = ctx.canvas.parentElement.clientWidth ;
     let scale = width / 1100;
-    ctx.lineWidth = 3;
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0,0,1100,200);
+
+    ctx.scale(scale,1);
+    ctx.lineWidth = 3;
     ctx.strokeStyle=inputWaveColors[i];
     ctx.beginPath();
     ctx.moveTo(0,10+waveData[0]);
     for (let i = 1; i < 1000; i++) {
         ctx.lineTo( i, 10+waveData[i]);
     }
-    ctx.canvas.style.transform =`scaleX(${scale}) translateX(-${1000-width}px)`;
+    //ctx.canvas.style.transform =`scaleX(${scale}) translateX(-${1000-width}px)`;
     ctx.stroke();
 }
 
 export function drawResultOnCanvas(ctx, waveData, resultData) {
     let width = ctx.canvas.parentElement.clientWidth ;
     let scale = width / 1100;
-    ctx.lineWidth = 3;
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0,0,1100,200);
+    ctx.scale(scale,1);
+    ctx.lineWidth = 3;
+
     ctx.strokeStyle='#eee';
     ctx.beginPath();
     ctx.moveTo(0, 5+waveData[0]);
@@ -34,7 +40,6 @@ export function drawResultOnCanvas(ctx, waveData, resultData) {
     for (let i = 1; i < 1000; i++) {
         ctx.lineTo(i, 5+resultData[i]);
     }
-    ctx.canvas.style.transform =`scaleX(${scale}) translateX(-${1000-width}px)`;
 
     ctx.stroke();
 }
