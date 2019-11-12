@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
     paper: {
         padding: theme.spacing(2),
         textAlign: 'center',
-        color: theme.palette.text.secondary,
+        color: 'white',
       },
 }));
 
@@ -116,9 +116,17 @@ export default function WaveGrid(props) {
       return (<Wave waveData={waveData} resultData={resultData} updateFunction={updateFunction} key='res'/>);
     }
 
+    const getError = () => {
+      let error = 0;
+      let meanSquaredError = (currentResult.map((d,i) => Math.pow((d - expectedResult[i]), 2)).reduce((a,b) => a+b))/currentResult.length;
+      return Math.pow(meanSquaredError,0.5);
+    }
+
     return (
         <Paper elevation={0} className={`${classes.paper_body} ${classes.paper}`} square>
             {wavesData && wavesData.length > 0 ? getAllWaves() : (<p>Loading</p>)}
+            {wavesData && wavesData.length > 0 ? <p>Error : {getError()}</p> : (<p>Loading</p>)}
+            
         </Paper>
     )
 }
