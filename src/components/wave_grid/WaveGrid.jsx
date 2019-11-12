@@ -30,11 +30,13 @@ const initialState = {
   currentError: 100
 }
 
+const waveFunctions = [getSinWave, getSawTooth, getBars, getRectWave,getMixedSine];
+
 const getNWaves = (n) => {
   let waves = [];
   for(let i = 0; i < n; i ++) {
     let a = F(R() * 10000) % typeOfWaves.length;
-     waves.push(getMixedSine(1000));
+     waves.push(waveFunctions[Math.floor(waveFunctions.length * Math.random())](1000));
   }
   return waves;
 }
