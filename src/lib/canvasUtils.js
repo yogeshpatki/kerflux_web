@@ -19,6 +19,11 @@ export function drawWaveOnCanvas(ctx, waveData,i) {
     ctx.stroke();
 }
 
+export function getScale(ctx, i) {
+    let width = ctx.canvas.parentElement.clientWidth ;
+    return width / 1100;
+}
+
 export function drawResultOnCanvas(ctx, waveData, resultData) {
     let width = ctx.canvas.parentElement.clientWidth ;
     let scale = width / 1100;
