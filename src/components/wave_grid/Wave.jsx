@@ -37,8 +37,8 @@ export default function Wave(props) {
         if(draggable && dragging) {
             const scale = getScale(canvas_ref.current.getContext('2d'), props.ind);
             console.log(scale);
-            //const scale =1;
-            const translatedWave = waveData.slice(0);
+            const scale =1;
+            //const translatedWave = waveData.slice(0);
             translatedWave.rotate((initialDragX-x)/scale);
             setState({...state, initialDragX: initialDragX - ((initialDragX-x)/scale) });
             updateFunction(props.ind, translatedWave);
