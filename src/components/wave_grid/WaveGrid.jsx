@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { Paper, makeStyles, Grid } from '@material-ui/core'
+import { Paper, makeStyles, Typography, Fab } from '@material-ui/core'
+import  AddIcon  from '@material-ui/icons/Add'
 import Wave from './Wave';
 import { getSinWave, getSawTooth, getBars, getRectWave,getMixedSine } from '../../lib/waves';
 const TOTAL_WAVE_LENGTH = 1000;
@@ -20,13 +21,20 @@ const useStyles = makeStyles(theme => ({
         padding: theme.spacing(2),
         color: 'white',
       },
+    add : {
+      color: 'white'
+    }
 }));
+const audioContext = new AudioContext();
+let audioSource;
+let filter = audioContext.createBiquadFilter();
 
 const initialState = {
   wavesData: [],
   expectedResult: [],
   currentResult: [],
-  currentError: 100
+  currentError: 0,
+  audioBuffer : null
 }
 
 const waveFunctions = [getSinWave, getSawTooth, getBars, getRectWave,getMixedSine];
@@ -77,18 +85,43 @@ const R = Math.random;
 export default function WaveGrid(props) {
     const {numberOfWaves} = props;
     const classes = useStyles();
-    
-
     const [state, setState] = useState(initialState);
-    
-    useEffect(() => {
-      if(state.wavesData.length === 0) {
-        setState(getWaves(numberOfWaves));
-      }
-    });
-
     const {wavesData, expectedResult, currentResult} = state;
     
+    const playMusic = () => {
+      audioSource = audioContext.createBufferSource();
+      audioSource.buffer = state.audioBuffer;
+      filter.type = 'lowpass';
+      filter.frequency.value = 200;
+      audioSource.connect(filter);
+      filter.connect(audioContext.destination);
+      audioSource.loop = true;
+      audioSource.start(0);
+    }
+    
+    const stopMusic = () => {
+      audioSource.stop(0);
+    }
+
+    useEffect(() => {
+      if(!state.audioBuffer) {
+        fetch('/Puzzled.mp3').then(data => data.arrayBuffer().then(music => {
+          audioContext.decodeAudioData(music, buffer => {
+            setState({...state, audioBuffer: buffer});
+          });
+        })).catch(err => console.log(err));
+      } else {
+        if (state.wavesData.length === 0) {
+          setState({...state, ...getWaves(numberOfWaves)});
+        }
+        if(!props.playMusic) {
+          stopMusic();
+        } else {
+          playMusic();
+        }
+      }
+      
+    }, [props.playMusic, state.audioBuffer]);    
 
     const updateFunction = (key, newData) => {
       wavesData[key] = newData;
@@ -115,13 +148,25 @@ export default function WaveGrid(props) {
 
     const getError = () => {
       let meanSquaredError = (currentResult.map((d,i) => Math.pow((d - expectedResult[i]), 2)).reduce((a,b) => a+b))/currentResult.length;
-      return Math.pow(meanSquaredError,0.5);
+      let rms = Math.pow(meanSquaredError, 0.5);
+      if(rms > 30) {
+        changeFrequency(100);
+      } else if(rms > 15) {
+        changeFrequency(2000 - (2000*rms/30));
+      } else {
+        changeFrequency(20000 - (20000*rms/30));
+      }
+      return rms;
+    }
+
+    const changeFrequency = (val) => {
+      filter.frequency.value = val;
     }
 
     return (
         <Paper elevation={0} className={`${classes.paper_body} ${classes.paper}`} square>
-              {wavesData && wavesData.length > 0 ? getAllWaves() : (<p>Loading</p>)}
-              {wavesData && wavesData.length > 0 ? <p>Error : {getError()}</p> : (<p>Loading</p>)}
+              {wavesData && wavesData.length > 0 ? getAllWaves() : (<Typography align="center" variant="h3">Loading</Typography>)}
+              {wavesData && wavesData.length > 0 ? <p>Error : {getError()}</p> : (<p></p>)}
         </Paper>
     )
 }
